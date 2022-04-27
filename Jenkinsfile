@@ -30,5 +30,10 @@ pipeline{
                 }
             }
         }
+        stage("CURL request"){
+            steps{
+                sh "curl localhost:8081"
+            }
+        }
     }
 }
