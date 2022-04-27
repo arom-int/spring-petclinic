@@ -19,7 +19,9 @@ pipeline{
         stage("RUN App"){
             steps{
                 script{
-                    sh nohup java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0-plain.jar --server.port=8081 &
+                    withEnv(['BUILD_ID=dontkill']){
+                        sh "nohup java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0-plain.jar --server.port=8081 &"
+                    }
                 }
             }
         }
