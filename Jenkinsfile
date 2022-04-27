@@ -1,56 +1,26 @@
 pipeline {
     agent any
-
-    triggers {
-        pollSCM('*/5 * * * *')
-    }
-
     stages {
-        stage('Compile') {
+		stage('Git Checkout'){
+			steps{
+				git branch: 'main', url: 'https://github.com/arom-int/spring-petclinic.git'
+			}
+		}
+        stage('Build') {
             steps {
-                gradlew('clean', 'classes')
-            }
-        }
-        stage('Unit Tests') {
-            steps {
-                gradlew('test')
-            }
-            post {
-                always {
-                    junit '**/build/test-results/test/TEST-*.xml'
-                }
-            }
-        }
-        stage('Assemble') {
-            steps {
-                gradlew('assemble')
-                stash includes: '**/build/libs/*.war', name: 'app'
-            }
-        }
-        stage('Promotion') {
-            steps {
-                timeout(time: 1, unit:'DAYS') {
-                    input 'Deploy to Production?'
-                }
-            }
-        }
-        stage('Deploy to Production') {
-            environment {
-                HEROKU_API_KEY = credentials('HEROKU_API_KEY')
-            }
-            steps {
-                unstash 'app'
-                gradlew('deployHeroku')
-            }
-        }
-    }
-    post {
-        failure {
-            mail to: 'alexei.romanov@endava.com', subject: 'Build failed', body: 'Please fix!'
-        }
-    }
-}
+                 sh "./gradlew build -x test"
 
-def gradlew(String... args) {
-    sh "./gradlew ${args.join(' ')} -s"
+            }
+		stage('Test') {
+            steps {
+                 sh "./gradlew test"
+
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh "java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0-plain.jar"
+            }
+        }
+    }
 }
