@@ -24,7 +24,7 @@ pipeline{
         stage("RUN App"){
             steps{
                 script{
-                    withEnv(['BUILD_ID=dontkill']){
+                    withEnv(['JENKINS_NODE_COOKIE=dontkill']){
                         sh "nohup java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0.jar --server.port=8081&"
                     }
                 }
