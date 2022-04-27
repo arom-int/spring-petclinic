@@ -16,12 +16,22 @@ pipeline{
                 sh "./gradlew build -x test"
             }
         }
+        stage("Test"){
+            steps{
+                sh "./gradlew test"
+            }
+        }
         stage("RUN App"){
             steps{
                 script{
                     withEnv(['BUILD_ID=dontkill']){
-                        sh "nohup java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0-plain.jar --server.port=8081 &"
+                        sh "java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0-plain.jar --server.port=8081 &"
                     }
+        stage("CURL"){
+            steps{
+                sh "curl -m http://172.20.128.2:8081/"
+            }
+        }
                 }
             }
         }
