@@ -1,6 +1,11 @@
 pipeline{
     agent any
     stages{
+        stage("Clean WS"){
+            steps{
+                cleanWs()
+            }
+        }
         stage("Git checkout"){
             steps{
                 git branch: 'main', url: 'https://github.com/arom-int/spring-petclinic.git'
