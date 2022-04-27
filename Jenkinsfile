@@ -1,27 +1,20 @@
-pipeline {
-    agent any
-    stages {
-		stage('Git Checkout'){
-			steps{
-				git branch: 'main', url: 'https://github.com/arom-int/spring-petclinic.git'
-			}
-		}
-        stage('Build') {
-            steps {
-                 sh "./gradlew build -x test"
-
-            }
-		stage('Test') {
-            steps {
-                 sh "./gradlew test"
-
+pipeline{
+    agent {label "master"}
+    stages{
+        stage("Git checkout"){
+            steps{
+                git branch: 'main', url: 'https://github.com/arom-int/spring-petclinic.git'
             }
         }
-        stage('Deploy') {
-            steps {
-                sh "java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0-plain.jar"
+        stage("Build"){
+            steps{
+                sh "./gradlew build -x test"
+            }
+        }
+        stage("RUN App"){
+            steps{
+                sh "nohup java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0-plain.jar --server.port=8081"
             }
         }
     }
-}
 }
