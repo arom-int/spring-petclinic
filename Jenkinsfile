@@ -1,5 +1,8 @@
 pipeline{
     agent any
+    environment {
+        JENKINS_NODE_COOKIE=dontkill
+    }
     stages{
         stage("Clean WS"){
             steps{
@@ -24,9 +27,9 @@ pipeline{
         stage("RUN App"){
             steps{
                 script{
-                    withEnv(['JENKINS_NODE_COOKIE=dontkill']){
-                        sh "nohup java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0.jar --server.port=8081&"
-                    }
+                    
+                        sh "$JENKINS_NODE_COOKIE; nohup  java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0.jar --server.port=8081&"
+                    
                 }
             }
         }
