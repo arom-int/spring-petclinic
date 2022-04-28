@@ -1,7 +1,7 @@
 pipeline{
     agent any
     environment {
-        JENKINS_NODE_COOKIE=dontkill
+        JENKINS_NODE_COOKIE="dontkill"
     }
     stages{
         stage("Clean WS"){
