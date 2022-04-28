@@ -1,9 +1,6 @@
 pipeline{
-    agent any
-    environment {
-        JENKINS_NODE_COOKIE="dontkill"
-    }
-    stages{
+    agent {label: "master"}
+        stages{
         stage("Clean WS"){
             steps{
                 cleanWs()
@@ -28,14 +25,14 @@ pipeline{
             steps{
                 script{
                     
-                        sh "$JENKINS_NODE_COOKIE; nohup  java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0.jar --server.port=8081&"
+                        sh "nohup  java -jar ${WORKSPACE}/build/libs/spring-petclinic-2.6.0.jar --server.port=8081&"
                     
                 }
             }
         }
         stage("CURL request"){
             steps{
-                sh "curl localhost:8081"
+                sh "curl -k -f --retry 40 --retry-delay 1 --retry-max-time 360 http://localhost:8081 -o /dev/null -w '%{http_code}\n'"
             }
         }
     }
